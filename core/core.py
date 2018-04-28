@@ -3,9 +3,9 @@ Discord Bot "Sky Bot"
 Core
 core/core.py
 WIP'''
-__version__ = '0.4.27 Dev Build 41'
+__version__ = '0.4.28 Dev Build 42'
 import secrets,data,status
-import requests,fuckit
+import requests,fuckit,os
 import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
@@ -42,8 +42,10 @@ def on_message(message):
   z=y.read()
   y.close()
   if message.content.startswith(':'):
+
     if len(message.content) == 1:
       yield from bot.send_message(message.channel,'This is the Development Prefix. Use it only if you know what you are doing! (ID = {})'.format(secrets.id))
+
     elif message.content == ':about':
       yield from bot.send_message(message.channel,'''@Sky#2509-{} {} by @python3lover#4401 and @__toad_#3754 running on Ubuntu.
 Packages Installed:
@@ -52,33 +54,41 @@ Libraries in Use:
 * requests (python-requests)
 * discord (discord.py)
 * asyncio (built-in)'''.format(status.id,__version__,'* '+z.replace(',','\n* ').replace('sky-','')))
+
     elif message.content == ':halt':
       yield from bot.send_message(message.channel,':octagonal_sign: Bye...')
       x=open('status.py','w')
       x.write('running=0\nid=\'{}\''.format(status.id))
       x.close()
       exit()
+
     elif message.content.startswith(':http/'):
 #       if message.content.startswith(':http/get/'):
 #         yield from bot.send_message(message.channel,requests.get((message.content+' ')[10:-1]).text)
       yield from bot.send_message(message.channel,'HTTP(S) Mode is not yet supported.')
+
     elif message.content == ':rehalt':
       yield from bot.send_message(message.channel,':octagonal_sign: ReHalt is not yet supported.')
+
     elif message.content.startswith(':add/'):
       pkgName = message.content.split('/')[-1]
       if pkgName in (',' + z.replace('\n','')).replace(',',',sky_').split(','):
         yield from bot.send_message(message.channel,':arrow_down: Updating package {}...'.format(pkgName))
         r = requests.get('https://raw.githubusercontent.com/discordlabo/sky-pkg/master/{}/core.py'.format(pkgName))
+
         if str(r.status_code)[0] in ['1','2']:
           file = open('sky_'+pkgName+'.py','w')
           file.write(r.text)
           file.close()
           yield from bot.send_message(message.channel,':arrow_down: Updated package {}.'.format(pkgName))
+
         else:
-          yield from bot.send_message(message.channel,':warning: Failed to add package {}, {}, {}'.format(pkgName,r.status_code,r.text))
+          yield from bot.send_message(message.channel,':warning: Failed to update package {}, {}, {}'.format(pkgName,r.status_code,r.text))
+
       else:
         yield from bot.send_message(message.channel,':arrow_down: Adding package {}...'.format(pkgName))
         r = requests.get('https://raw.githubusercontent.com/discordlabo/sky-pkg/master/{}/core.py'.format(pkgName))
+
         if str(r.status_code)[0] in ['1','2']:
           file = open('sky_'+pkgName+'.py','w')
           file.write(r.text)
@@ -87,13 +97,33 @@ Libraries in Use:
           file.write(',sky_'+pkgName)
           file.close()
           yield from bot.send_message(message.channel,':arrow_down: Added package {}.'.format(pkgName))
+
         else:
           yield from bot.send_message(message.channel,':warning: Failed to add package {}, {}, {}.'.format(pkgName,r.status_code,r.text))
+
+    elif  message.content.startswith(':remove/'):
+      yield from bot.send_message(message.channel,':arrow_up: Removing package {}...'.format(pkgName))
+
+      try:
+        os.remove('sky_'+pkgName+'.py')
+        file = open('pkg.csv','r')
+        read = file.read()
+        file.close()
+        file = open('pkg.csv','w')
+        file.write(read.replace('sky_'+pkgName,'').replace(',,',','))
+        file.close()
+        yield from bot.send_message(message.channel,':arrow_up: Removed package {}.'.format(pkgName))
+
+      except Exception as error:
+        yield from bot.send_message(message.channel,':warning: Failed to remove package {}, {}.'.format(pkgName,error))
+
     else:
       pass
+
   elif message.content.startswith('s!'):
     if message.content == 's!about':
       yield from bot.send_message(message.channel,'@Sky {} by @python3lover#4401 and @__toad_#????'.format(__version__))
+
     elif message.content.startswith('s!calc/'):
       try:
         ans = eval((message.content+' ')[6:-1])
@@ -104,10 +134,13 @@ Libraries in Use:
       except:
         ans = ':octagonal_sign: Unexpected Error'
       yield from bot.send_message(message.channel,ans)
+
     else:
       yield from bot.send_message(message.channel,'Hi! I\'m Sky, a bot.')
+
   elif message.content in data.badWords:
     yield from bot.delete_message(message)
+
   else:
     for i in pkg_io:
       i[0].call(message)
