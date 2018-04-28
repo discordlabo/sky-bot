@@ -1,1 +1,7 @@
 theme: jekyll-theme-cayman
+github:
+  zip_url: http://example.com/download.zip
+  another_url: another value
+title: Sky Bot
+description: A bot for everyone.
+show_downloads: true
