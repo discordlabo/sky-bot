@@ -21,10 +21,10 @@ app = discord.Client()
 bot = commands.Bot(command_prefix='')
 
 for i in z.split(','):
-  fuckit(i.replace('\n',''))
-  pkg_io = []
-  print('i Init [{}]'.format(i.replace('\n','')))
   try:
+    fuckit(i.replace('\n',''))
+    pkg_io = []
+    print('i Init [{}]'.format(i.replace('\n','')))
     eval('pkg_io.append(['+i.replace('\n','')+'.io(__version__,bot),'+i.replace('\n','')+'.io(__version__,bot).name()])')
   except Exception as error:
     print('|- Failed to start {} - {}'.format(i.replace('\n',''),error))
