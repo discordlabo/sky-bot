@@ -3,7 +3,7 @@ Discord Bot "Sky Bot"
 Core
 core/core.py
 WIP'''
-__version__ = '0.4.27 Dev Build 41'
+__version__ = '0.4.27 Dev Build 42'
 import secrets,data,status
 import requests,fuckit
 import discord
@@ -18,13 +18,13 @@ z=y.read()
 y.close()
 
 app = discord.Client()
-bot = commands.Bot(command_prefix='')
+bot = commands.Bot(command_prefix='z')
 
 for i in z.split(','):
+  fuckit(i.replace('\n',''))
+  pkg_io = []
+  print('i Init [{}]'.format(i.replace('\n','')))
   try:
-    fuckit(i.replace('\n',''))
-    pkg_io = []
-    print('i Init [{}]'.format(i.replace('\n','')))
     eval('pkg_io.append(['+i.replace('\n','')+'.io(__version__,bot),'+i.replace('\n','')+'.io(__version__,bot).name()])')
   except Exception as error:
     print('|- Failed to start {} - {}'.format(i.replace('\n',''),error))
@@ -51,7 +51,9 @@ Packages Installed:
 Libraries in Use:
 * requests (python-requests)
 * discord (discord.py)
-* asyncio (built-in)'''.format(status.id,__version__,'* '+z.replace(',','\n* ').replace('sky-','')))
+* asyncio (built-in)
+Errors
+* **Build 42** has error when starting packages (`sky_warnings`)'''.format(status.id,__version__,'* '+z.replace(',','\n* ').replace('sky-','')))
     elif message.content == ':halt':
       yield from bot.send_message(message.channel,':octagonal_sign: Bye...')
       x=open('status.py','w')
@@ -93,7 +95,7 @@ Libraries in Use:
       pass
   elif message.content.startswith('s!'):
     if message.content == 's!about':
-      yield from bot.send_message(message.channel,'@Sky {} by @python3lover#4401 and @__toad_#????'.format(__version__))
+      yield from bot.send_message(message.channel,'@Sky {} by @python3lover#4401 and @__toad_#???? **Build 42 has an error.**'.format(__version__))
     elif message.content.startswith('s!calc/'):
       try:
         ans = eval((message.content+' ')[6:-1])
@@ -108,10 +110,12 @@ Libraries in Use:
       yield from bot.send_message(message.channel,'Hi! I\'m Sky, a bot.')
   elif message.content in data.badWords:
     yield from bot.delete_message(message)
+  elif message.content == 's!purge 5':
+    yield from bot.delete_message(message)
   else:
     for i in pkg_io:
       i[0].call(message)
-
+    
 bot.run(secrets.token)
 x=open('status.py','w')
 x.write('running=0\nid=\'{}\''.format(status.id))
